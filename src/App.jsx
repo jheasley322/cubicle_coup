@@ -26,7 +26,9 @@ export default function App() {
   const [pending, setPending] = useState(null); // { kind, actionId, cost, firstCell }
   const [lineMode, setLineMode] = useState(null); // 'row' | 'col'
   const [toast, setToast] = useState("");
+  const [acting, setActing] = useState(false); // a write is in flight
 
+  const actingRef = useRef(false);
   const gameRef = useRef(game);
   gameRef.current = game;
   const screenRef = useRef(screen);
@@ -69,6 +71,9 @@ export default function App() {
   // Optimistically apply locally, then push to the server. Adopt the authoritative
   // state on success; on a 409 conflict, resync to the returned current state.
   async function pushState(next, isRematch = false) {
+    if (actingRef.current) return; // serialize: one write in flight at a time
+    actingRef.current = true;
+    setActing(true);
     setGame(next);
     setPending(null);
     setLineMode(null);
@@ -85,6 +90,9 @@ export default function App() {
       flash(e.message || "Sync error.");
       const cur = await readGame(me.code);
       if (cur) setGame(cur);
+    } finally {
+      actingRef.current = false;
+      setActing(false);
     }
   }
 
@@ -400,7 +408,7 @@ export default function App() {
                   <div className="cc-bar">
                     <button
                       className="cc-act cc-deploy"
-                      disabled={deploysLeft <= 0 || myHead <= 0}
+                      disabled={deploysLeft <= 0 || myHead <= 0 || acting}
                       onClick={() => setPending({ kind: "deploy" })}
                     >
                       <span className="cc-ae">🧑‍💼</span>
@@ -411,7 +419,7 @@ export default function App() {
                       <button
                         key={a.id}
                         className="cc-act"
-                        disabled={myClout < a.cost}
+                        disabled={myClout < a.cost || acting}
                         title={a.desc}
                         onClick={() => beginAction(a)}
                       >
@@ -425,7 +433,7 @@ export default function App() {
                   {/* zone powers you control */}
                   <div className="cc-zones">
                     {zoneControlled("breakRoom") && (
-                      <button className="cc-zone" onClick={snackBreak} disabled={game.turnFlags.snackUsed}>
+                      <button className="cc-zone" onClick={snackBreak} disabled={game.turnFlags.snackUsed || acting}>
                         ☕ Snack Break <i>free</i>
                       </button>
                     )}
@@ -433,7 +441,7 @@ export default function App() {
                       <button
                         className="cc-zone"
                         onClick={beginMeeting}
-                        disabled={game.turnFlags.meetingUsed || myClout < 2}
+                        disabled={game.turnFlags.meetingUsed || myClout < 2 || acting}
                       >
                         📊 Mandatory Meeting <i>2⚡</i>
                       </button>
@@ -442,14 +450,14 @@ export default function App() {
                       <button
                         className="cc-zone"
                         onClick={brainstorm}
-                        disabled={game.turnFlags.brainstormUsed || myClout < 1}
+                        disabled={game.turnFlags.brainstormUsed || myClout < 1 || acting}
                       >
                         🛋️ Brainstorm <i>1⚡</i>
                       </button>
                     )}
                   </div>
 
-                  <button className="cc-end" onClick={endTurn}>End turn ▸</button>
+                  <button className="cc-end" onClick={endTurn} disabled={acting}>End turn ▸</button>
                 </>
               )}
             </div>
