@@ -86,7 +86,7 @@ total headcount, then it's a draw.
 GitHub Pages serves static files only — it has nowhere to store a game both players can
 reach. So the shared state lives in Supabase. Two deploys, two jobs:
 
-```
+```text
    Player A ─┐                         ┌─ Realtime push ─┐
              ├─ HTTPS ─► Edge Function ─► Postgres row ───┤
    Player B ─┘            "game"          (1 per game)    └─► both browsers
@@ -155,7 +155,7 @@ which builds with Vite and publishes `dist/` to GitHub Pages. The build reads
 
 ## Project structure
 
-```
+```text
 index.html                     # Vite entry
 src/
   main.jsx                     # React mount
