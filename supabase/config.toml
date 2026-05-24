@@ -1,0 +1,6 @@
+project_id = "cubicle_coup"
+
+# The game function does its own auth (per-side game token), so we don't require
+# a Supabase JWT to invoke it. The publishable key is still sent as the apikey.
+[functions.game]
+verify_jwt = false

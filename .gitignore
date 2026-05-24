@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-ssr/
+
+# env / secrets — never commit
+.env
+.env.local
+.env.*.local
+*.env
+
+# supabase local artifacts
+supabase/.branches/
+supabase/.temp/
+.supabase/
+
+# legacy config convention (kept out of git per original handoff)
+config/config.yaml
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# claude local-only settings
+.claude/settings.local.json
