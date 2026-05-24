@@ -2,7 +2,7 @@
 
 # Cubicle Coup 🏢
 
-**Two departments. One open floor plan. May the best politics win.**
+**Two departments. One open floor plan. May the best sneaky tactics win.**
 
 A two-player, turn-based office-territory turf war. Lure neutrals with coffee, poach
 rivals with counter-offers, evacuate a wing by microwaving fish, and seize the corner
